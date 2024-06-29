@@ -1,26 +1,32 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+$tasks = isset($_SESSION['tasks']) ? $_SESSION['tasks'] : [];
+?>
+
 <div class="container mt-4">
-    <h2>All Anime Rentals</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Genre</th>
-                <th>Price per Day</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach (getAnimes() as $anime) : ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($anime['title']); ?></td>
-                    <td><?php echo htmlspecialchars($anime['genre']); ?></td>
-                    <td>$<?php echo htmlspecialchars($anime['price_per_day']); ?></td>
-                    <td>
-                        <a href="index.php?page=edit&id=<?php echo $anime['id']; ?>" class="btn btn-info btn-sm">Edit</a>
-                        <a href="index.php?page=delete&id=<?php echo $anime['id']; ?>" class="btn btn-danger btn-sm">Delete</a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">All Tasks</h3>
+        </div>
+        <div class="card-body">
+            <?php if (empty($tasks)) : ?>
+                <p>No tasks found. <a href="index.php?page=add">Add a new task</a>.</p>
+            <?php else : ?>
+                <ul class="list-group">
+                    <?php foreach ($tasks as $index => $task) : ?>
+                        <li class="list-group-item">
+                            <strong><?php echo htmlspecialchars($task['title']); ?></strong><br>
+                            Time: <?php echo htmlspecialchars($task['time']); ?><br>
+                            Date: <?php echo htmlspecialchars($task['date']); ?><br>
+                            <a href="index.php?page=edit&id=<?php echo $index; ?>" class="btn btn-sm btn-warning">Edit</a>
+                            <a href="index.php?page=delete&id=<?php echo $index; ?>" class="btn btn-sm btn-danger">Delete</a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
+    </div>
 </div>
