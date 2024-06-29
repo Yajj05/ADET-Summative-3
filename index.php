@@ -13,23 +13,23 @@ $pageContent = '';
 // Set page title and content based on the requested page
 switch ($page) {
     case 'add':
-        $pageTitle = 'New Anime';
+        $pageTitle = 'Add New Task';
         $pageContent = 'add.php';
         break;
     case 'edit':
-        $pageTitle = 'Edit Anime';
+        $pageTitle = 'Edit Task';
         $pageContent = 'edit.php';
         break;
     case 'delete':
-        $pageTitle = 'Delete Anime';
+        $pageTitle = 'Delete Task';
         $pageContent = 'delete.php';
         break;
     case 'view_single':
-        $pageTitle = 'View Anime Details';
+        $pageTitle = 'View Task Details';
         $pageContent = 'view_single.php';
         break;
     default:
-        $pageTitle = 'All Anime';
+        $pageTitle = 'All Tasks';
         $pageContent = 'view.php';
         break;
 }
@@ -41,7 +41,7 @@ switch ($page) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Management System</title>
+    <title>To-Do List Management System</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Font Awesome CSS -->
@@ -79,16 +79,16 @@ switch ($page) {
 
 <body>
     <div class="sidebar">
-        <h4 class="text-center">Anime Management</h4>
+        <h4 class="text-center">To-Do List Management</h4>
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link <?php echo $page === 'add' ? 'active' : ''; ?>" href="index.php?page=add">
-                    <i class="fas fa-plus-square mr-2"></i>Add Anime
+                    <i class="fas fa-plus-square mr-2"></i>Add Task
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link <?php echo $page === 'view' ? 'active' : ''; ?>" href="index.php?page=view">
-                    <i class="fas fa-video mr-2"></i>View All Anime
+                    <i class="fas fa-list mr-2"></i>View All Tasks
                 </a>
             </li>
         </ul>
