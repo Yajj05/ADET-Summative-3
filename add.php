@@ -1,28 +1,31 @@
 <?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+require_once 'functions.php';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate and process form data
     $title = htmlspecialchars(trim($_POST['title']));
-    $genre = htmlspecialchars(trim($_POST['genre']));
-    $price_per_day = htmlspecialchars(trim($_POST['price_per_day']));
+    $time = htmlspecialchars(trim($_POST['time']));
+    $date = htmlspecialchars(trim($_POST['date']));
 
     // Perform validation (you can add more complex validation as needed)
     $errors = [];
     if (empty($title)) {
-        $errors[] = "Title is required.";
+        $errors[] = "Task is required.";
     }
-    if (empty($genre)) {
-        $errors[] = "Genre is required.";
+    if (empty($time)) {
+        $errors[] = "Time is required.";
     }
-    if (empty($price_per_day)) {
-        $errors[] = "Price per day is required.";
-    } elseif (!is_numeric($price_per_day) || $price_per_day <= 0) {
-        $errors[] = "Invalid price per day.";
+    if (empty($date)) {
+        $errors[] = "Date is required.";
     }
 
-    // If no errors, add the anime
+    // If no errors, add the task
     if (empty($errors)) {
-        addAnime($title, $genre, $price_per_day);
-        $_SESSION['alert'] = ['message' => 'Anime added successfully.', 'type' => 'success'];
+        addTask($title, $time, $date);
+        $_SESSION['alert'] = ['message' => 'Task added successfully.', 'type' => 'success'];
         header('Location: index.php?page=view');
         exit();
     } else {
@@ -37,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="container mt-4">
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Add New Anime</h3>
+            <h3 class="card-title">Add New Task</h3>
         </div>
         <div class="card-body">
             <?php if (isset($_SESSION['alert'])) : ?>
@@ -51,18 +54,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php endif; ?>
             <form action="index.php?page=add" method="post">
                 <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="Enter title" required>
+                    <label for="title">Task</label>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="Enter task title" required>
                 </div>
                 <div class="form-group">
-                    <label for="genre">Genre</label>
-                    <input type="text" class="form-control" id="genre" name="genre" placeholder="Enter genre" required>
+                    <label for="time">Time</label>
+                    <input type="text" class="form-control" id="time" name="time" placeholder="Enter time" required>
                 </div>
                 <div class="form-group">
-                    <label for="price_per_day">Price per Day</label>
-                    <input type="number" class="form-control" id="price_per_day" name="price_per_day" placeholder="Enter price per day" required>
+                    <label for="date">Date</label>
+                    <input type="date" class="form-control" id="date" name="date" placeholder="Enter date" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Anime</button>
+                <button type="submit" class="btn btn-primary">Add Task</button>
             </form>
         </div>
     </div>
