@@ -1,27 +1,39 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
-    $id = $_GET['id'];
-    $title = htmlspecialchars(trim($_POST['title']));
-    $genre = htmlspecialchars(trim($_POST['genre']));
-    $price_per_day = htmlspecialchars(trim($_POST['price_per_day']));
+session_start();
 
-    // Validate inputs (add more validation as needed)
+require_once 'functions.php';
+
+if (!isset($_GET['id']) || !isset($_SESSION['tasks'][$_GET['id']])) {
+    $_SESSION['alert'] = ['message' => 'Invalid task ID.', 'type' => 'danger'];
+    header('Location: index.php?page=view');
+    exit();
+}
+
+$taskId = $_GET['id'];
+$task = $_SESSION['tasks'][$taskId];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Validate and process form data
+    $title = htmlspecialchars(trim($_POST['title']));
+    $time = htmlspecialchars(trim($_POST['time']));
+    $date = htmlspecialchars(trim($_POST['date']));
+
+    // Perform validation (you can add more complex validation as needed)
     $errors = [];
     if (empty($title)) {
-        $errors[] = "Title is required.";
+        $errors[] = "Task is required.";
     }
-    if (empty($genre)) {
-        $errors[] = "Genre is required.";
+    if (empty($time)) {
+        $errors[] = "Time is required.";
     }
-    if (empty($price_per_day)) {
-        $errors[] = "Price per day is required.";
-    } elseif (!is_numeric($price_per_day) || $price_per_day <= 0) {
-        $errors[] = "Invalid price per day.";
+    if (empty($date)) {
+        $errors[] = "Date is required.";
     }
 
+    // If no errors, edit the task
     if (empty($errors)) {
-        editAnime($id, $title, $genre, $price_per_day);
-        $_SESSION['alert'] = ['message' => 'Anime updated successfully.', 'type' => 'success'];
+        editTask($taskId, $title, $time, $date);
+        $_SESSION['alert'] = ['message' => 'Task updated successfully.', 'type' => 'success'];
         header('Location: index.php?page=view');
         exit();
     } else {
@@ -31,21 +43,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
         }
     }
 }
-
-$id = $_GET['id'] ?? null;
-$anime = getAnimeById($id);
-
-if (!$anime) {
-    $_SESSION['alert'] = ['message' => 'Anime not found.', 'type' => 'danger'];
-    header('Location: index.php?page=view');
-    exit();
-}
 ?>
 
 <div class="container mt-4">
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Edit Anime</h3>
+            <h3 class="card-title">Edit Task</h3>
         </div>
         <div class="card-body">
             <?php if (isset($_SESSION['alert'])) : ?>
@@ -57,21 +60,20 @@ if (!$anime) {
                 </div>
                 <?php unset($_SESSION['alert']); ?>
             <?php endif; ?>
-            <form action="index.php?page=edit&id=<?php echo $anime['id']; ?>" method="post">
+            <form action="index.php?page=edit&id=<?php echo $taskId; ?>" method="post">
                 <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" value="<?php echo htmlspecialchars($anime['title']); ?>" required>
+                    <label for="title">Task</label>
+                    <input type="text" class="form-control" id="title" name="title" value="<?php echo htmlspecialchars($task['title']); ?>" required>
                 </div>
                 <div class="form-group">
-                    <label for="genre">Genre</label>
-                    <input type="text" class="form-control" id="genre" name="genre" value="<?php echo htmlspecialchars($anime['genre']); ?>" required>
+                    <label for="time">Time</label>
+                    <input type="text" class="form-control" id="time" name="time" value="<?php echo htmlspecialchars($task['time']); ?>" required>
                 </div>
                 <div class="form-group">
-                    <label for="price_per_day">Price per Day</label>
-                    <input type="number" class="form-control" id="price_per_day" name="price_per_day" value="<?php echo htmlspecialchars($anime['price_per_day']); ?>" required>
+                    <label for="date">Date</label>
+                    <input type="date" class="form-control" id="date" name="date" value="<?php echo htmlspecialchars($task['date']); ?>" required>
                 </div>
-                <button type="submit" name="submit" class="btn btn-primary">Update Anime</button>
-                <a href="index.php?page=view" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update Task</button>
             </form>
         </div>
     </div>
