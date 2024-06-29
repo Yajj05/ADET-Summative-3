@@ -1,16 +1,20 @@
 <?php
-$id = $_GET['id'] ?? null;
-$anime = getAnimeById($id);
+session_start();
 
-if (!$anime) {
-    $_SESSION['alert'] = ['message' => 'Anime not found.', 'type' => 'danger'];
+require_once 'functions.php';
+
+if (!isset($_GET['id']) || !isset($_SESSION['tasks'][$_GET['id']])) {
+    $_SESSION['alert'] = ['message' => 'Invalid task ID.', 'type' => 'danger'];
     header('Location: index.php?page=view');
     exit();
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirm'])) {
-    deleteAnime($id);
-    $_SESSION['alert'] = ['message' => 'Anime deleted successfully.', 'type' => 'success'];
+$taskId = $_GET['id'];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Delete the task
+    deleteTask($taskId);
+    $_SESSION['alert'] = ['message' => 'Task deleted successfully.', 'type' => 'success'];
     header('Location: index.php?page=view');
     exit();
 }
@@ -19,17 +23,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['confirm'])) {
 <div class="container mt-4">
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Delete Anime</h3>
+            <h3 class="card-title">Delete Task</h3>
         </div>
         <div class="card-body">
-            <p>Are you sure you want to delete this anime?</p>
-            <p><strong>Title:</strong> <?php echo htmlspecialchars($anime['title']); ?></p>
-            <p><strong>Genre:</strong> <?php echo htmlspecialchars($anime['genre']); ?></p>
-            <p><strong>Price per Day:</strong> <?php echo htmlspecialchars($anime['price_per_day']); ?></p>
-        </div>
-        <div class="card-footer">
-            <form action="index.php?page=delete&id=<?php echo $anime['id']; ?>" method="post">
-                <button type="submit" name="confirm" class="btn btn-danger">Confirm Delete</button>
+            <?php if (isset($_SESSION['alert'])) : ?>
+                <div class="alert alert-<?php echo $_SESSION['alert']['type']; ?> alert-dismissible fade show" role="alert">
+                    <?php echo $_SESSION['alert']['message']; ?>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <?php unset($_SESSION['alert']); ?>
+            <?php endif; ?>
+            <p>Are you sure you want to delete this task?</p>
+            <form action="index.php?page=delete&id=<?php echo $taskId; ?>" method="post">
+                <button type="submit" class="btn btn-danger">Delete</button>
                 <a href="index.php?page=view" class="btn btn-secondary">Cancel</a>
             </form>
         </div>
